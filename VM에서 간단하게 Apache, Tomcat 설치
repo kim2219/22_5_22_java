@@ -1,0 +1,77 @@
+# VM에서 간단하게 Apache, Tomcat 설치
+
+> <h5>apache 설치</h5>
+>
+> * yum -y install java-1.8.0-openjdk-devel.x867_64 &nbsp;&nbsp; : &nbsp; 자바 설치
+> * javac -version &nbsp;&nbsp; : &nbsp; 버전 확인
+> * ps -ax | grep httpd
+> * yum list installed | grep httpd
+> * yum -y install httpd &nbsp;&nbsp; : &nbsp; 아파치 설치
+> * firewall-cmd --permanent --zone=public --add-port=80/tcp &nbsp;&nbsp; : &nbsp; 방화벽 뚫기
+> * firewall-cmd --reload &nbsp;&nbsp; : &nbsp; 재기동
+> * systemctl start httpd &nbsp;&nbsp; : &nbsp; 아파치 시작
+> * http://localhost/ &nbsp;&nbsp; : &nbsp; 해당 주소 가서 확인
+><hr>
+> <h5>tomcat 간단하게 설치</h5>
+>
+> * yum -y install wget
+> * wget https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.69/bin/apache-tomcat-8.5.69.tar.gz &nbsp;&nbsp; : &nbsp; 해당 파일 다운받기
+> * tar -zxvf apache-tomcat-8.5.69.tar.gz &nbsp;&nbsp; : &nbsp; 다운받은 파일을 압축푼다(-zxvf)
+> * firewall-cmd --permanent --add-port=8080/tcp &nbsp;&nbsp; : &nbsp; 방화벽 뚫기
+> * cd /usr/local/apache-tomcat-8.5.69/bin/
+> * ./startup.sh &nbsp;&nbsp; : &nbsp; tomcat 시작
+> * http://localhost:8080/ &nbsp;&nbsp; : &nbsp; 해당 주소 가서 확인
+><hr>
+> <h5> Apache와 tomcat 연동! </h5>
+>
+> * yum -y install gcc gcc-c++ httpd-devel
+> * cd /usr/local
+> * wget http://mirror.apache-kr.org/tomcat/tomcat-connectors/jk/tomcat-connectors-1.2.48-src.tar.gz
+> * tar zxvf tomcat-connectors-1.2.48-src.tar.gz
+> * cd tomcat-connectors-1.2.48-src/native/
+> * ./configure --with-apxs=/usr/bin/apxs
+> * make
+> * make install
+>
+> <br>
+>
+> * vi /etc/httpd/conf/httpd.conf  _맨 밑에 작성_
+> ```
+> LoadModule jk_module modules/mod_jk.so
+> <VirtualHost *:80>
+> ServerName localhost
+> JkMount /* tomcat
+> </VirtualHost>
+> <IfModule mod_jk.c>
+> JkWorkersFile conf/workers.properties
+> JkShmFile run/mod_jk.shm
+> JkLogFile logs/mod_jk.log
+> JkLogLevel info
+> JkLogStampFormat "[%y %m %d %H:%M:%S]"
+> </IfModule> 
+> ```
+> <br>
+>
+> * vi /etc/httpd/conf/workers.properties _아래 내용 작성_
+> ```
+> worker.list=tomcat
+> worker.tomcat.port=8009
+> worker.tomcat.host=localhost
+> worker.tomcat.type=ajp13
+> worker.tomcat.lbfactor=1
+> ```
+><br>
+>
+> * vi /usr/local/apache-tomcat-8.5.69/conf/server.xml _116번째 줄 수정_
+> ```
+> address="0.0.0.0"
+> secretRequired="false"
+> port="8009"
+> redirectPort="8443"
+> ```
+> <br>
+>
+> * cd /usr/local/apache-tomcat-8.5.69/bin/
+> * ./shutcown.sh
+> * ./start.sh
+> * systemctl restart httpd : 재시작
