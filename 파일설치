@@ -1,0 +1,36 @@
+# 파일설치!
+
+> <h6>방화벽</h6>
+>
+> * firewall-cmd --state
+> * firewall-cmd --zone=public --list-all
+> * firewall-cmd --zone=public --add-port=20/tcp --permanent &nbsp;# FTP 
+> * firewall-cmd --zone=public --add-port=21/tcp --permanent &nbsp;# FTP 
+> * firewall-cmd --zone=public --add-port=80/tcp --permanent &nbsp;# HTTP
+> * firewall-cmd --zone=public --add-port=443/tcp --permanent &nbsp;# HTTPS
+> * firewall-cmd --zone=public --add-port=3306/tcp --permanent &nbsp;# MySQL
+> * firewall-cmd --zone=public --add-port=8009/tcp --permanent &nbsp;# Tomcat
+> * firewall-cmd --zone=public --add-port=8443/tcp --permanent &nbsp;# Tomcat redirect
+> * firewall-cmd --reload : 방화벽이 잘 뚫렸는지 확인
+> * firewall-cmd --zone=public --list-all
+>
+> * systemctl unmask firewalld
+> * systemctl start firewalld
+> * systemctl enable firewalld
+><hr>
+><h6>아파치 관련 명령어</h6>
+>
+> * systemctl start httpd : 시작 
+> * systemctl status httpd : 상태 확인
+> * systemctl stop httpd : 중지
+> * systemctl restart httpd : 재시작
+><hr>
+> <h6>Systemctl 등록</h6>
+>
+> * systemctl daemon-reload : systemctl 재부팅
+> * systemctl enable tomcat8
+> * systemctl restart tomcat8 : tomcat 재기동
+> * systemctl stop tomcat8 : 정지
+> * systemctl start tomcat8 : tomcat 실행
+> * systemctl enable tomcat8.service : 부팅 시 자동 실행 서비스 등록
+>
